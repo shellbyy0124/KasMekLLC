@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
 
         super().__init__() # change to super(MainWindow, self).__init__()
 
-        """COMMENT OUT THE NEXT 4 LINES IF USING THE COMMENTED OUT CODE BELOW."""
+        """COMMENT OUT THE NEXT 4 LINES IF USING THE COMMENTED OUT CODE BELOW..."""
 
         self.setWindowTitle("KasMek, LLC - Login") # remove this
         self.setStyleSheet("background : black") # remove this
