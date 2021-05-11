@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         self.setStyleSheet("background : black") # remove this
         self.UiComponents() # remove this
         self.showMaximized() # remove this
-        self.check = [] # keep this but move to another file for login system along with lines 51-102. Those are the login verification
+        self.check = [] # keep this but move to another file for login system along with lines 51-102. Those are the login verification ~~ KasMekLLC/modules/cyber/login_sec/login.py
 
         """
         UNCOMMENT THE NEXT 4 LINES BELOW
@@ -79,9 +79,7 @@ class MainWindow(QMainWindow):
 
         conn = sqlite3.connect('kasmek.db')
 
-        cursor = conn.cursor()
-
-        check_id = cursor.execute('SELECT * FROM employees where ID = ?')
+        check_id = conn.execute('SELECT id FROM employees where ID = ?')
 
         if int(self.id_entry.text()) != check_id:
 
@@ -98,10 +96,11 @@ class MainWindow(QMainWindow):
     def check_pw(self):
 
         conn = sqlite3.connect('kasmek.db')
-        
-        cursor = conn.cursor()
 
-        check_pw = cursor.execute(f'SELECT id, password FROM employees where ID = {int(self.id_entry.text())}, password = ?')
+        sql = 'SELECT password FROM employees where ID = ?'
+        vals = (id,)
+
+        check_pw = conn.execute(sql, vals)
 
         if self.pw_entry.text() != check_pw:
 
@@ -129,6 +128,17 @@ class MainWindow(QMainWindow):
 
     def continu(self):
 
+        check_list = ["Yes", "Yes"]
+
+        if self.check == check_list:
+
+            self.button_login.setEnabled(True)
+            self.button_login.clicked.connect(self.next_window)
+        
+        else:
+
+            self.UiComponents()
+
         # conn = sqlite3.connect('kasmek.db')
 
         # cursor = conn.cursor()
@@ -142,13 +152,6 @@ class MainWindow(QMainWindow):
         # else:
 
         #     pass
-
-        check_list = ["Yes", "Yes"]
-
-        if self.check == check_list:
-
-            self.button_login.setEnabled(True)
-            self.button_login.clicked.connect(self.next_window)
 
     def next_window(self):
 
