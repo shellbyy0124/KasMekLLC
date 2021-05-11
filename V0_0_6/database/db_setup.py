@@ -27,3 +27,7 @@
 #     print(result)
 
 #     cursor.close()
+
+import sqlite3
+
+conn = sqlite3.connect('kasmek.db')

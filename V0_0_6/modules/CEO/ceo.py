@@ -5,6 +5,8 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
+from modules.ACCT.time_clock.time import TimeSystem
+
 class ChiefExecOfficer(QMainWindow):
 
     def __init__(self):

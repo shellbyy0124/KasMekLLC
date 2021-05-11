@@ -92,17 +92,6 @@ class LoginSystem(QMainWindow):
             self.check.append("Yes")
             self.continu()
 
-    """
-    THIS FUNCTION IS DESIGNED TO START THE SCREEN EXCHANGE. THIS FUNCTION NEEDS TO BE MOVED TO THE MANAGER.PY FILE IN THE MAIN FILE (KASMEKLLC). THE PURPOSE OF THIS FUNCTION IS TO TAKE
-    THE JOB TITLE OF THE EMPLOYEE AND MATCH IT TO A JOB TITLE WITHIN THE JOBS TABLE OF THE DATABASE, AND THEN OPEN THE SCREEN THAT IS CORRESPONDENT TO THAT JOB TITLE. I HAVE ALREADY CREATED
-    A CEO FOLDER WITH A CEO.PY FILE TO START THE HOME SCREEN FROM THERE. I WILL BE GOING BACK AND CREATING OTHER .PY FILES TO HAVE AT LEAST ONE .PY FILE FOR EACH JOB TITLE SO THAT WHEN I UPDATE
-    TO THE REPO AGAIN, YOU ALL CAN SEE WHAT DIRECTION I AM HEADED IN WITH THIS PROJECT. DO REMEMBER THAT I AM NOT ALONE IN THIS PROJECT. WITHIN THE PROGRAMMING TEAM WORKING ON THIS PROJECT IS MYSELF,
-    KATAREBORN, AND DISCORD USER gamingbuddhist#9599.
-    """
-
-    """
-    I HAVE COMMENTED OUT THE ABOVE PARAGRAPHS DESCRIPTION CODE BELOW SO THAT I CAN WRITE THE CODE THE WAY THAT I KNOW HOW FOR RIGHT NOW"""
-
     def continu(self):
 
         check_list = ["Yes", "Yes"]
@@ -111,21 +100,28 @@ class LoginSystem(QMainWindow):
 
             self.button_login.setEnabled(True)
             self.button_login.clicked.connect(self.next_window)
+
+            conn = sqlite3.connect('kasmek.db')
+            cursor = conn.cursor()
+            sql = 'SELECT job_title FROM employees where id = ?'
+            vals = (id,)
+            cursor.execute(sql, vals)
+            job_title = cursor.fetchone()
+
+            if job_title == "CEO":
+
+                self.w = None
+
+            else:
+
+                pass
         
         else:
 
             self.UiComponents()
 
-        # conn = sqlite3.connect('kasmek.db')
+        
 
-        # cursor = conn.cursor()
-
-        # job_title = cursor.execute(f'SELECT job_title FROM employees where ID = {int(self.id_entry.text())}')
-
-        # if job_title == "CEO":
-
-        #     self.w = None
-
-        # else:
-
-        #     pass
+App = QApplication(sys.argv)
+window = LoginSystem()
+sys.exit(App.exec_())
