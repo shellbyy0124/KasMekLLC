@@ -1,0 +1,10 @@
+json
+sqlite3
+PyQt5
+PyQt5-tools
+PySide2
+asyncio
+datetime
+random
+sys
+os
