@@ -4,3 +4,4 @@ previous_versions/*
 .venv
 master.json
 employees.json
+venv
