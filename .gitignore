@@ -2,3 +2,5 @@ kasmek.db
 KasMekLLC.code-workspace
 previous_versions/*
 .venv
+master.json
+employees.json
