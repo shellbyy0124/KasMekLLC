@@ -1,54 +1,79 @@
-import sqlite3
-import sys, os
+import sys
+from Modules import database
+from database import database_user_test_data
+from PySide6 import QtGui, QtWidgets, QtCore
+from PySide6.QtWidgets import QApplication, QMainWindow
+from UI.login_screen import Ui_login_window
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-# from modules.Ui_window_creator import Ui_mainWindow
 
-from modules.cyber.login_security.login import LoginSystem
-
-# insert Ui_mainWindow, QMainWindow into class MainWindow() instead of just class MainWindow(QMainWindow):
-
-class MainWindow(QMainWindow):
-    
+class LoginScreen(Ui_login_window, QMainWindow):
     def __init__(self):
+        super(LoginScreen, self).__init__()
+        self.setupUi(self)
+        database.create_test_tables()
+        database.create_test_user_data(database_user_test_data.data)
 
-        super().__init__() # change to super(MainWindow, self).__init__()
+        # Set constants
+        self.version = "0.7.0.0"
+        self.version_label.setText(self.version)
 
-        """
-        REMOVE THE NEXT 4 LINES IF USING THE COMMENTED OUT CODE BELOW
-        """
+        # Set variables
+        self.password = ""
 
-        self.setWindowTitle("KasMek, LLC - Login") # remove this
-        self.setStyleSheet("background : black") # remove this
-        self.UiComponents() # remove this
-        self.showMaximized() # remove this
-        self.check = [] # keep this but move to another file for login system along with lines 51-102. Those are the login verification ~~ KasMekLLC/modules/cyber/login_sec/login.py
-    
-        # super(MainWindow, self).__init__()
+        # Make window borderless
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        # self.setupUi(self)
+        # Hash password as typed (cannot use * in passwords)
+        self.password_line_edit.textChanged.connect(self.hash_password)
 
-        # self.button_exit.clicked.connect(self.exit_button)
-        # self.button_login.clicked.connect(self.switch)
+        # Buttons
+        self.login_pushbutton.clicked.connect(self.login)
+        self.quit_pushbutton.clicked.connect(self.escape)
 
-    def UiComponents(self):
+        # Event filter for enter key
+        self.user_id_line_edit.installEventFilter(self)
+        self.password_line_edit.installEventFilter(self)
 
-        button_login = QPushButton("Login", self)
-        button_login.setGeometry(500, 500, 100, 50)
-        button_login.setStyleSheet("border : 1px solid green; color : green; text-decoration : underline")
-        button_login.clicked.connect(self.next_window)
+    def hash_password(self):
+        current_text = self.password_line_edit.text()
+        if len(current_text) < len(self.password):
+            self.password = self.password[:len(current_text)]
+        elif len(current_text) > len(self.password):
+            self.password += ''.join([x for x in current_text if x != '*'])
+            self.password_line_edit.setText(len(self.password) * '*')
+        elif len(current_text) == len(self.password) and '*' not in current_text:
+            self.password = ''.join([x for x in current_text if x != '*'])
+            self.password_line_edit.setText(len(self.password) * '*')
 
-    def next_window(self):
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.KeyPress and (obj is self.password_line_edit or obj is self.user_id_line_edit):
+            if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
+                self.login()
+        return super().eventFilter(obj, event)
 
-        self.w = LoginSystem()
-        self.w.showMaximized()
+    def login(self):
+        msg = QtWidgets.QMessageBox()
+        user_id = self.user_id_line_edit.text()
+        password = self.password
+        employee = database.fetch_employee(user_id)
+        if password == employee[2]:
+            print(f'Welcome {employee[1]}! You have logged in successfully')
+        else:
+            print(f'Incorrect password. A virus has been released onto your PC. Good luck!')
 
-    def exit_button(self):
+    @staticmethod
+    def escape():
+        sys.exit()
 
-        self.close()
 
-App = QApplication(sys.argv)
-window = MainWindow()
-sys.exit(App.exec_())
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = LoginScreen()
+
+    # set window and application icons
+    app.setWindowIcon(QtGui.QIcon('./Data/Icons/innovation.ico'))
+    window.setWindowIcon(QtGui.QIcon('./Data/Icons/innovation.ico'))
+
+    window.show()
+    sys.exit(app.exec_())
