@@ -1,0 +1,8 @@
+kasmek.db
+KasMekLLC.code-workspace
+previous_versions/*
+master.json
+employees.json
+/venv/
+venv
+.idea
